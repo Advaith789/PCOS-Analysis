@@ -1,0 +1,466 @@
+---
+title: "PCOS factors visualization"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+{r setup, include=FALSE}
+library(flexdashboard)
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+TAB 1.1
+=======================================
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+
+```{r}
+library(ggplot2)
+PCOS_data <- read.csv("C:/R/PCOS_data.csv")
+
+strip = ggplot(PCOS_data, aes (PCOS..Y.N.,Age..yrs., col = PCOS..Y.N.))+ 
+geom_jitter(position = position_jitter(width = 0.2), size = 1) + scale_x_discrete(limits = 
+c(0.0,1.0)) + stat_summary(fun.y = mean, geom = "point", size = 3, color = "red") 
+strip
+
+```
+
+Row
+----------------------------------------------------
+
+```{r}
+library(ggplot2)
+PCOS_data <- read.csv("C:/R/PCOS_data.csv")
+
+strip = ggplot(PCOS_data, aes (PCOS..Y.N.,Weight..Kg., col = PCOS..Y.N.))+ 
+geom_jitter(position = position_jitter(width = 0.2), size = 1) +scale_x_discrete(limits=c(0.0,1.0)) 
+stat_summary(fun.y=mean,geom="point",size=3, color="red") 
+strip
+
+```
+
+```{r}
+strip = ggplot(PCOS_data, aes (PCOS..Y.N.,Height.Cm., col = PCOS..Y.N.))+ 
+geom_jitter(position = position_jitter(width = 0.2), size = 1) + scale_x_discrete(limits=c(0.0,1.0)) 
+stat_summary(fun.y=mean,geom="point",size=3, color="red") 
+strip
+
+```
+
+TAB 1.2
+======================================
+
+Row
+--------------------------------------
+
+
+### Pie charts
+
+```{r}
+ypcos = subset(PCOS_data, PCOS..Y.N. == 1) 
+npcos = subset(PCOS_data, PCOS..Y.N. == 0)
+
+pcnum = sum(PCOS_data$PCOS..Y.N.)
+
+pcrate= pcnum / nrow(PCOS_data)
+
+rates = c(pcrate, 1- pcrate) 
+rates = c(pcrate*100, (1- pcrate)*100)
+
+
+Ap = subset(ypcos, Blood.Group == 11)
+An = subset(ypcos, Blood.Group == 12) 
+Bp = subset(ypcos, Blood.Group == 13) 
+Bn = subset(ypcos, Blood.Group == 14) 
+Op = subset(ypcos, Blood.Group == 15) 
+On = subset(ypcos, Blood.Group == 16) 
+ABp = subset(ypcos, Blood.Group == 17) 
+ABn = subset(ypcos, Blood.Group == 18) 
+Aprate = nrow(Ap)/nrow(ypcos) 
+Anrate = nrow(An)/nrow(ypcos) 
+Bprate = nrow(Bp)/nrow(ypcos) 
+Bnrate = nrow(Bn)/nrow(ypcos) 
+Oprate = nrow(Op)/nrow(ypcos) 
+Onrate = nrow(On)/nrow(ypcos) 
+ABprate = nrow(ABp)/nrow(ypcos) 
+ABnrate = nrow(ABn)/nrow(ypcos) 
+bloodgrouprates=c(Aprate,Anrate,Bprate,Bnrate,Oprate,Onrate,ABprate,ABnrate) 
+
+piepercent = round(bloodgrouprates*100,2) 
+labels = c("A+","A-", "B+", "B-", "O+", "O-","AB+", "AB-") 
+pie(bloodgrouprates, labels = piepercent, main = "Blood group divisions of PCOS Patients", 
+col = c("#58949C", "#FFF49C", "#85DE77", "#E0FEFE", "#C7CEEA","#FFDAC1", 
+"#FF9AA2", "#988270")) 
+legend("topright",c("A+","A-", "B+", "B-", "O+", "O-","AB+", "AB-"), cex = 1.3, fill = 
+c("#58949C", "#FFF49C", "#85DE77", "#E0FEFE", "#C7CEEA","#FFDAC1", "#FF9AA2", 
+"#988270")) 
+```
+
+Row
+--------------------------------------
+
+```{r}
+ypcos = subset(PCOS_data, PCOS..Y.N. == 1) 
+npcos = subset(PCOS_data, PCOS..Y.N. == 0)
+
+pcnum = sum(PCOS_data$PCOS..Y.N.) 
+
+pcrate= pcnum / nrow(PCOS_data)
+
+rates = c(pcrate, 1- pcrate) 
+rates = c(pcrate*100, (1- pcrate)*100)
+
+HBMI=subset(PCOS_data,BMI>30) 
+rate = 100*sum(HBMI$PCOS..Y.N.)/nrow(HBMI) 
+
+rate1=c(rate, 100-rate) 
+rates = paste(rate1, "%", sep = "" ) 
+labels = labels = c("Affected by PCOS", "Not effected by PCOS") 
+pie(rate1,labels,radius = 1,main= "Obese women affected by PCOS",col = c("blue", 
+"yellow"),cex = 0.9) 
+legend("topleft",rates, cex = 1, fill = c( "blue", "yellow"))
+```
+
+
+```{r}
+ypcos = subset(PCOS_data, PCOS..Y.N. == 1) 
+npcos = subset(PCOS_data, PCOS..Y.N. == 0)
+
+pcnum = sum(PCOS_data$PCOS..Y.N.) 
+
+pcrate= pcnum / nrow(PCOS_data)
+
+rates = c(pcrate, 1- pcrate) 
+rates = c(pcrate*100, (1- pcrate)*100)
+
+
+rates = c(pcrate, 1- pcrate) 
+rates = c(pcrate*100, (1- pcrate)*100) 
+piepercent = round(rates,2) 
+
+pie(rates, labels = piepercent, main = "PCOS Pie Chart", col = c("pink", "purple")) 
+legend("bottomright",c("Diagnosed with PCOS", "Not diagnosed with PCOS"), cex = 0.8, 
+fill = c( "pink", "purple"))
+```
+
+TAB 2
+======================================
+
+Row
+--------------------------------------
+
+### Different Dot Plots
+
+```{r}
+library(plotly)
+
+subset = subset(PCOS_data, PCOS_data$PCOS..Y.N.==1)
+Age <-subset$Age..yrs.
+weight <- subset$Weight..Kg.
+height <- subset$Height.Cm.
+x <- subset$BMI
+
+data <- data.frame(x, Age, weight, height)
+
+fig <- plot_ly(data, x = ~x, y = ~Age, name = 'Age', type = 'scatter', mode = 'markers', color = 'pink', size = 2)
+fig <- fig %>% add_trace(y = ~weight, name = 'Weight', mode = 'markers', color = 'purple', size = 3)
+fig <- fig %>% add_trace(y = ~height, name = 'Height', mode = 'markers', color = 'blue', size = 6)
+fig <- fig %>%
+  layout(paper_bgcolor = '#000000',
+         plot_bgcolor = '#000000',
+    font = list(color = "FFFFFF")
+  )
+fig
+```
+
+
+### Violin Plots to Differentiate 
+
+```{r}
+PCOS_data <- read.csv("C:/R/PCOS_data.csv")
+df <- PCOS_data
+fig <- df %>%
+  plot_ly(type = 'violin') 
+fig <- fig %>%
+  add_trace(
+    x = ~PCOS_data$PCOS..Y.N.,
+    y = ~PCOS_data$Hip.inch.,
+    legendgroup = 'Hip',
+    scalegroup = 'Hip',
+    name = 'Hip',
+    box = list(
+      visible = T
+    ),
+    meanline = list(
+      visible = T
+    ),
+    color = I("blue")
+  ) 
+fig <- fig %>%
+  add_trace(
+    x = ~PCOS_data$PCOS..Y.N.,
+    y = ~PCOS_data$Waist.inch.,
+    legendgroup = 'Waist',
+    scalegroup = 'waist',
+    name = 'Waist',
+    box = list(
+      visible = T
+    ),
+    meanline = list(
+      visible = T
+    ),
+    color = I("green")
+  ) 
+
+fig <- fig %>%
+  layout(
+    yaxis = list(
+      zeroline = F
+    ),
+    violinmode = 'group',
+    paper_bgcolor = '#000000',
+         plot_bgcolor = '#000000',
+    font = list(color = "FFFFFF")
+  )
+
+fig
+```
+
+Row
+---------------------------------
+
+
+### DistPlot
+
+```{r}
+PCOS_data <- read.csv("C:/R/PCOS_data.csv")
+x1 <-  PCOS_data$Weight..Kg.
+x2 <-  PCOS_data$Pulse.rate.bpm.
+x3 <-  PCOS_data$Hb.g.dl.
+x4 <-  PCOS_data$RR..breaths.min.
+group_labels = c('Group 1', 'Group 2', 'Group 3', 'Group 4')  
+
+df1 <- data.frame(x1, group_labels[1])  
+colnames(df1) <- c('x', 'Group') 
+df2 <- data.frame(x2, group_labels[2]) 
+colnames(df2) <- c('x', 'Group') 
+df3 <- data.frame(x3, group_labels[3]) 
+colnames(df3) <- c('x', 'Group') 
+df4 <- data.frame(x4, group_labels[4]) 
+colnames(df4) <- c('x', 'Group') 
+df <- rbind(df1,df2,df3,df4) 
+colnames(df) <- c('x', 'Group') 
+
+gg <- ggplot(data = df ) +  
+  geom_histogram(aes(x=x, y = ..density.., fill=Group),bins = 50, alpha = 0.7) + 
+ geom_density(aes(x=x, color=Group)) + geom_rug(aes(x=x, color=Group))+ 
+  ylab("") + 
+  xlab("")
+
+
+ggplotly(gg)%>% 
+  layout(
+         font = list(color = "FFFFFF"),
+         paper_bgcolor = '#000000',
+         plot_bgcolor = '#000000',
+         xaxis = list(showgrid = F, tickfont = list(color = "#e6e6e6")),yaxis = list(showgrid = F, tickfont = list(color = "#e6e6e6")))
+
+```
+
+
+TAB 3
+=======================================
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Counters to identify same values
+
+```{r}
+PCOS_data <- read.csv("C:/R/PCOS_data.csv")
+cnt <- with(PCOS_data, table(Weight..Kg.,Height.Cm., BMI))
+
+fig <- plot_ly(PCOS_data, x = ~Weight..Kg., y = ~Height.Cm., z= ~BMI) 
+fig <- fig %>%
+  add_trace(
+    type='histogram2dcontour',
+    contours = list(
+      showlabels = T,
+      labelfont = list(
+        family = 'Raleway',
+        color = 'white'
+      )
+    ),
+    hoverlabel = list(
+      bgcolor = 'white',
+      bordercolor = 'black',
+      font = list(
+        family = 'Raleway',
+        color = 'black'
+      )
+    )
+)
+fig <- fig %>% layout(title = 'Weight and Height with PCOS',
+         legend = list(x = 0.029, y = 1.038,
+                      font = list(size = 13)),
+         font = list (color = "FFFFFF"),
+         xaxis = list(showgrid = F, tickfont = list(color = "#e6e6e6")),
+         margin = list(l = 100, r = 20, t = 70, b = 70),
+         paper_bgcolor = '#000000',
+         plot_bgcolor = '#000000')
+fig 
+
+```
+
+Row
+-----------------------------------------
+
+### Bar vs Line
+```{r}
+df<-PCOS_data
+PCOS_data <- read.csv("C:/R/PCOS_data.csv")
+y <- names(PCOS_data)
+Name <- y[38:44]
+Sums <- c(sum(PCOS_data$BP._Systolic..mmHg.),sum(PCOS_data$BP._Diastolic..mmHg.),sum(PCOS_data$Follicle.No...L.),sum(PCOS_data$Follicle.No...R.),sum(PCOS_data$Avg..F.size..L...mm.),sum(PCOS_data$Avg..F.size..R...mm.),sum(PCOS_data$Endometrium..mm.))
+Medians <- c(median(PCOS_data$BP._Systolic..mmHg.),median(PCOS_data$BP._Diastolic..mmHg.),median(PCOS_data$Follicle.No...L.),median(PCOS_data$Follicle.No...R.),median(PCOS_data$Avg..F.size..L...mm.),median(PCOS_data$Avg..F.size..R...mm.),median(PCOS_data$Endometrium..mm.))
+data <- data.frame(Name, Sums, Medians)
+fig1 <- plot_ly(x = ~Sums, y = ~reorder(Name, Sums), name = 'Sums of the Underlooked Reports',type = 'bar', orientation = 'h',marker = list(color = 'rgba(50, 171, 96, 0.6)',line = list(color = 'rgba(50, 171, 96, 1.0)', width = 1))) 
+fig1 <- fig1 %>% layout(yaxis = list(showgrid = FALSE, showline = FALSE, showticklabels = TRUE, domain= c(0, 0.85)),xaxis = list(zeroline = FALSE, showline = FALSE, showticklabels = TRUE, showgrid = TRUE))  
+fig1 <- fig1 %>% add_annotations(xref = 'x1', yref = 'y', x = Sums,  y = Name,text = paste(round(Sums, 2), ' s'),font = list(size = 15, color = 'rgb(50, 171, 96)'),showarrow = FALSE)
+fig2 <- plot_ly(x = ~Medians, y = ~reorder(Name, Sums), name = 'Medians of the Underlooked Reports',type = 'scatter', mode = 'lines+markers',line = list(color = 'rgb(128, 0, 128)')) 
+fig2 <- fig2 %>% layout(yaxis = list(showgrid = FALSE, showline = TRUE, showticklabels = FALSE,linecolor = 'rgba(102, 102, 102, 0.8)', linewidth = 2,domain = c(0, 0.85)),xaxis = list(zeroline = FALSE, showline = FALSE, showticklabels = TRUE, showgrid = TRUE,side = 'top', dtick = 25000)) 
+fig2 <- fig2 %>% add_annotations(xref = 'x2', yref = 'y',x = Medians, y = Name,text = paste(Medians, ' M'),font = list(size = 15, color = 'rgb(128, 0, 128)'),showarrow = FALSE)
+fig <- subplot(fig1, fig2) 
+fig <- fig %>% layout(title = 'The Underlooked Reports',legend = list(x = 0.029, y = 1.038,font = list(size = 13)),font = list (color = "FFFFFF"), xaxis = list(showgrid = F, tickfont = list(color = "#e6e6e6")), yaxis = list(showgrid = F, tickfont = list(color = "#e6e6e6"),tickmode = "array", tickvals = 1:nrow(df), ticktext = unique(df$Task),domain = c(0, 0.9)), margin = list(l = 100, r = 20, t = 70, b = 70),paper_bgcolor = '#000000',plot_bgcolor = '#000000')
+fig
+```
+
+TAB 4
+=======================================
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### 3D Scatter Plot for the Serum Levels
+
+```{r}
+PCOS_data <- read.csv("C:/R/PCOS_data.csv")
+fig <- plot_ly(PCOS_data[1:50,], x = ~PCOS_data$Hip.inch., y = ~PCOS_data$PRG.ng.mL., z = ~PCOS_data$Waist.inch.,
+               marker = list(color = ~PCOS_data$Waist.Hip.Ratio, colorscale = c('#FFE1A1', '#683531'), showscale = TRUE))
+fig <- fig %>% add_markers()
+fig <- fig %>% layout(scene = list(xaxis = list(title = 'Hip Inch'),
+                                   yaxis = list(title = 'PRG.ng'),
+                                   zaxis = list(title = 'Waist Inch')),
+                      annotations = list(
+                        x = 1,
+                        y = 0.5,
+                        text = 'PRG Serum',
+                        xref = 'paper',
+                        yref = 'paper',
+                        showarrow = FALSE
+                        ),paper_bgcolor = '#000000',
+         plot_bgcolor = '#000000',
+         font = list(color = "#ffffff"))
+fig 
+
+```
+Row
+-------------------------------
+
+### Age, Height and Weight
+
+```{r}
+PCOS_data <- read.csv("C:/R/PCOS_data.csv")
+PCOS_data <- PCOS_data[sample(nrow(PCOS_data),65),]
+
+ PCOS_data <- PCOS_data[order(PCOS_data$Blood.Group ),]
+ size <-  PCOS_data$BMI
+colors <- c('#4AC6B7', '#1972A4', '#965F8A', '#FF7070', '#C61951')
+
+fig <- plot_ly(PCOS_data , x = ~PCOS_data$Age..yrs. , y = ~PCOS_data$Weight..Kg. , z = ~PCOS_data$Height.Cm., color = ~PCOS_data$Blood.Group , size = ~size, colors = colors,
+             marker = list(symbol = 'circle', sizemode = 'diameter'), sizes = c(5, 35),
+             text = ~paste( ' age', Age..yrs. , '<br>weight', Weight..Kg.,
+                           '<br>height',Height.Cm. ))
+fig <- fig %>% layout(title = 'Height vs age vs weight ',
+         scene = list(xaxis = list(title = ' AGE',
+                      gridcolor = '#ffffff',
+                      type = 'log',
+                      zerolinewidth = 1,
+                      ticklen = 5,
+                      gridwidth = 2),
+               yaxis = list(title = ' Weight',
+                      gridcolor = '#ffffff',
+                      #range = c(10, 100),
+                      zerolinewidth = 1,
+                      ticklen = 5,
+                      gridwith = 2),
+               zaxis = list(title = ' Height',
+                            gridcolor = '#ffffff',
+                            #range= c(100,200),
+                            type = 'log',
+                            zerolinewidth = 1,
+                            ticklen = 5,
+                            gridwith = 2)),
+         paper_bgcolor = '#000000',
+         plot_bgcolor = '#000000',
+         font = list(color = "#ffffff"))
+
+fig 
+
+```
+
+TAB 5
+=======================================
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Blood Groups
+
+```{r}
+PCOS_data <- read.csv("C:/R/PCOS_data.csv")
+dens <- with(PCOS_data, tapply(PCOS_data$Hb.g.dl., INDEX = PCOS_data$Blood.Group, density))
+data <- data.frame(
+  x = unlist(lapply(dens, "[[", "x")),
+  y = unlist(lapply(dens, "[[", "y")),
+  BG = rep(names(dens), each = length(dens[[1]]$x)))
+fig <- plot_ly(data, x = ~x, y = ~y, z = ~BG, type = 'scatter3d', mode = 'lines', color = ~BG)
+fig 
+ 
+```
+
+Row
+---------------------------------
+
+### Height, Weight and BMI
+
+```{r}
+library(plotly)
+library(GGally)
+library(viridis)
+library(hrbrthemes)
+PCOS_data <- read.csv("C:/R/PCOS_data.csv")
+
+p <- ggparcoord(ypcos[sample(nrow(ypcos),50),],
+                columns=5:7,groupColumn = 4,
+    showPoints = TRUE,
+    alphaLines = 0.05)
+
+ggplotly(p)
+```
+
+Data Table
+=======================================
+```{r}
+library(DT)
+datatable(PCOS_data,
+          caption="PCOS Data",
+          rownames=T,
+          filter="top",
+          options=list(pageLength=100))
+```
